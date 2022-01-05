@@ -98,3 +98,19 @@ func (userRepo *usuarios) Update(ID uint64, user models.Usuario) error {
 
 	return nil
 }
+
+//Delete deleta um usuario
+func (userRepo *usuarios) Delete(ID uint64) error {
+	statement, err := userRepo.db.Prepare("DELETE FROM usuarios WHERE id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(ID); err != nil {
+		return err
+	}
+
+	return nil
+}
