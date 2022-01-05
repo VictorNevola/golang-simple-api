@@ -28,7 +28,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := usuario.Prepare(); err != nil {
+	if err := usuario.Prepare("create"); err != nil {
 		responses.Error(w, http.StatusUnprocessableEntity, err)
 		return
 	}
@@ -102,7 +102,45 @@ func BuscaUsuario(w http.ResponseWriter, r *http.Request) {
 
 //AtualizarUsuario atualiza um usuario
 func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Atualizando usuário"))
+	params := mux.Vars(r)
+	userId, err := strconv.ParseUint(params["usuarioId"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	var user models.Usuario
+	if err := json.Unmarshal(body, &user); err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := user.Prepare("update"); err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := db.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repositorie := repositories.NewRepositorieUsers(db)
+	if err := repositorie.Update(userId, user); err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
+
 }
 
 //DeletarUsuario deleta um usuario

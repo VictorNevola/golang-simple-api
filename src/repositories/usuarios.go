@@ -3,7 +3,6 @@ package repositories
 import (
 	"api/src/models"
 	"database/sql"
-	"errors"
 	"fmt"
 )
 
@@ -75,17 +74,27 @@ func (userRepo *usuarios) FindByID(userID uint64) (models.Usuario, error) {
 
 	var user models.Usuario
 
-	if !rows.Next() {
-		return models.Usuario{}, errors.New("usuario não encontrado")
-	}
-
 	if rows.Next() {
-		err = rows.Scan(&user.ID, &user.Nome, &user.Nick, &user.Email, &user.CriadoEm)
-		if err != nil {
+		if err := rows.Scan(&user.ID, &user.Nome, &user.Nick, &user.Email, &user.CriadoEm); err != nil {
 			return models.Usuario{}, err
 		}
 	}
 
 	return user, nil
+}
 
+//Update atualiza um usuario
+func (userRepo *usuarios) Update(ID uint64, user models.Usuario) error {
+	statement, err := userRepo.db.Prepare("UPDATE usuarios SET nome = ?, nick = ?, email = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(user.Nome, user.Nick, user.Email, ID); err != nil {
+		return err
+	}
+
+	return nil
 }

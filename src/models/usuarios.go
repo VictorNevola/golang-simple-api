@@ -17,7 +17,7 @@ type Usuario struct {
 	CriadoEm time.Time `json:"criado_em,omitempty"`
 }
 
-func (usuario *Usuario) validate() error {
+func (usuario *Usuario) validate(step string) error {
 
 	if usuario.Nome == "" {
 		return errors.New("nome é obrigatório e não pode ser vazio")
@@ -25,7 +25,7 @@ func (usuario *Usuario) validate() error {
 	if usuario.Nick == "" {
 		return errors.New("nick é obrigatório e não pode ser vazio")
 	}
-	if usuario.Senha == "" {
+	if usuario.Senha == "" && step == "create" {
 		return errors.New("senha é obrigatório e não pode ser vazio")
 	}
 
@@ -37,8 +37,8 @@ func (usuario *Usuario) validate() error {
 }
 
 //Prepare é responsável por preparar o usuário para ser salvo no banco de dados
-func (Usuario *Usuario) Prepare() error {
-	if err := Usuario.validate(); err != nil {
+func (Usuario *Usuario) Prepare(step string) error {
+	if err := Usuario.validate(step); err != nil {
 		return err
 	}
 
