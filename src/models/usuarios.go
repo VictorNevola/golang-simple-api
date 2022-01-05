@@ -2,9 +2,10 @@ package models
 
 import (
 	"errors"
-	"net/mail"
 	"strings"
 	"time"
+
+	"github.com/badoux/checkmail"
 )
 
 // Usuario representa um usuario
@@ -29,8 +30,12 @@ func (usuario *Usuario) validate(step string) error {
 		return errors.New("senha é obrigatório e não pode ser vazio")
 	}
 
-	if _, err := mail.ParseAddress(usuario.Email); err != nil {
-		return errors.New("email é obrigatório, não pode ser vazio ou é invalido")
+	if usuario.Email == "" {
+		return errors.New("email é obrigatório e não pode ser vazio")
+	}
+
+	if err := checkmail.ValidateFormat(usuario.Email); err != nil {
+		return errors.New("email inválido")
 	}
 
 	return nil
