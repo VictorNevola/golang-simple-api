@@ -3,6 +3,7 @@ package repositories
 import (
 	"api/src/models"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -38,7 +39,7 @@ func (userRepo *usuarios) Create(usuario models.Usuario) (uint64, error) {
 	return uint64(lastID), nil
 }
 
-//Find retorna todos usuario que atendam ao nome ou nick
+//FindByNameOrNick retorna todos usuario que atendam ao nome ou nick
 func (userRepo *usuarios) FindByNameOrNick(nameOrNick string) ([]models.Usuario, error) {
 	nameOrNick = fmt.Sprintf("%%%s%%", nameOrNick)
 
@@ -62,5 +63,29 @@ func (userRepo *usuarios) FindByNameOrNick(nameOrNick string) ([]models.Usuario,
 	}
 
 	return usuarios, nil
+}
+
+//FindByID retorna um usuario pelo id
+func (userRepo *usuarios) FindByID(userID uint64) (models.Usuario, error) {
+	rows, err := userRepo.db.Query("SELECT id, nome, nick, email, criadoEm FROM usuarios WHERE id = ?", userID)
+	if err != nil {
+		return models.Usuario{}, err
+	}
+	defer rows.Close()
+
+	var user models.Usuario
+
+	if !rows.Next() {
+		return models.Usuario{}, errors.New("usuario não encontrado")
+	}
+
+	if rows.Next() {
+		err = rows.Scan(&user.ID, &user.Nome, &user.Nick, &user.Email, &user.CriadoEm)
+		if err != nil {
+			return models.Usuario{}, err
+		}
+	}
+
+	return user, nil
 
 }
