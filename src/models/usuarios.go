@@ -34,7 +34,6 @@ func (usuario *Usuario) validate() error {
 	}
 
 	return nil
-
 }
 
 //Prepare é responsável por preparar o usuário para ser salvo no banco de dados
@@ -46,7 +45,6 @@ func (Usuario *Usuario) Prepare() error {
 	Usuario.format()
 	return nil
 }
-
 func (usuario *Usuario) format() {
 
 	usuario.Nome = strings.TrimSpace(usuario.Nome)

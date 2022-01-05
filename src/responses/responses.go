@@ -8,6 +8,7 @@ import (
 
 //JSON return a json response
 func JSON(w http.ResponseWriter, statusCode int, payload interface{}) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
 	if error := json.NewEncoder(w).Encode(payload); error != nil {
