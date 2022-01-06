@@ -1,6 +1,7 @@
 package models
 
 import (
+	"api/src/security"
 	"errors"
 	"strings"
 	"time"
@@ -47,14 +48,27 @@ func (Usuario *Usuario) Prepare(step string) error {
 		return err
 	}
 
-	Usuario.format()
+	if err := Usuario.format(step); err != nil {
+		return err
+	}
+
 	return nil
 }
-func (usuario *Usuario) format() {
-
+func (usuario *Usuario) format(step string) error {
 	usuario.Nome = strings.TrimSpace(usuario.Nome)
 	usuario.Nick = strings.TrimSpace(usuario.Nick)
 	usuario.Email = strings.TrimSpace(usuario.Email)
 	usuario.Senha = strings.TrimSpace(usuario.Senha)
 
+	if step == "create" {
+		passwordHash, err := security.Hash(usuario.Senha)
+		if err != nil {
+			return err
+		}
+
+		usuario.Senha = string(passwordHash)
+
+	}
+
+	return nil
 }
