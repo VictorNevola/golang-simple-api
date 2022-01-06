@@ -36,4 +36,10 @@ var rotasUsuarios = []Route{
 		HandlerFunc: controllers.DeletarUsuario,
 		isPrivate:   true,
 	},
+	{
+		URI:         "/usuarios/{usuarioId}/seguir",
+		Method:      http.MethodPost,
+		HandlerFunc: controllers.SeguirUsuario,
+		isPrivate:   true,
+	},
 }
