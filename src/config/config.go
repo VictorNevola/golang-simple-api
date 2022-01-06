@@ -15,6 +15,9 @@ var (
 
 	//Port with the port to listen
 	Port = 0
+
+	//Secret é a chave que vai ser usar para gerar o token
+	SecretKey []byte
 )
 
 //Load initializes environment variables
@@ -34,4 +37,6 @@ func Load() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
