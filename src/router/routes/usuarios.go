@@ -22,18 +22,18 @@ var rotasUsuarios = []Route{
 		URI:         "/usuarios/{usuarioId}",
 		Method:      http.MethodGet,
 		HandlerFunc: controllers.BuscaUsuario,
-		isPrivate:   false,
+		isPrivate:   true,
 	},
 	{
 		URI:         "/usuarios/{usuarioId}",
 		Method:      http.MethodPut,
 		HandlerFunc: controllers.AtualizarUsuario,
-		isPrivate:   false,
+		isPrivate:   true,
 	},
 	{
 		URI:         "/usuarios/{usuarioId}",
 		Method:      http.MethodDelete,
 		HandlerFunc: controllers.DeletarUsuario,
-		isPrivate:   false,
+		isPrivate:   true,
 	},
 }
