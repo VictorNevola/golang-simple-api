@@ -16,7 +16,7 @@ var rotasUsuarios = []Route{
 		URI:         "/usuarios",
 		Method:      http.MethodGet,
 		HandlerFunc: controllers.BuscaUsuarios,
-		isPrivate:   false,
+		isPrivate:   true,
 	},
 	{
 		URI:         "/usuarios/{usuarioId}",

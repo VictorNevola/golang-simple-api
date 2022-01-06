@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"api/src/middlewares"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -19,7 +20,11 @@ func Config(r *mux.Router) *mux.Router {
 	routes := append(rotasUsuarios, rotasLogin)
 
 	for _, route := range routes {
-		r.HandleFunc(route.URI, route.HandlerFunc).Methods(route.Method)
+		if route.isPrivate {
+			r.HandleFunc(route.URI, middlewares.Logger(middlewares.Authenticate(route.HandlerFunc))).Methods(route.Method)
+		} else {
+			r.HandleFunc(route.URI, middlewares.Logger(route.HandlerFunc)).Methods(route.Method)
+		}
 	}
 
 	return r
