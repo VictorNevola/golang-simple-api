@@ -3,7 +3,6 @@ package middlewares
 import (
 	"api/src/autentication"
 	"api/src/responses"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -25,7 +24,6 @@ func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		fmt.Println("validando token")
 		next(w, r)
 	}
 }
