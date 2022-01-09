@@ -42,4 +42,10 @@ var rotasUsuarios = []Route{
 		HandlerFunc: controllers.SeguirUsuario,
 		isPrivate:   true,
 	},
+	{
+		URI:         "/usuarios/{usuarioId}/parar-de-seguir",
+		Method:      http.MethodPost,
+		HandlerFunc: controllers.PararDeSeguirUsuario,
+		isPrivate:   true,
+	},
 }

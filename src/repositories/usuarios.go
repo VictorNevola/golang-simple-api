@@ -148,3 +148,19 @@ func (userRepo *usuarios) Follow(userID uint64, followID uint64) error {
 
 	return nil
 }
+
+//Unfollow permite que um usuario pare de seguir o outro
+func (userRepo *usuarios) Unfollow(userID uint64, followID uint64) error {
+	statement, err := userRepo.db.Prepare("DELETE FROM seguidores WHERE usuario_id = ? AND seguidor_id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(userID, followID); err != nil {
+		return err
+	}
+
+	return nil
+}
