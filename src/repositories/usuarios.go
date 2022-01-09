@@ -187,6 +187,7 @@ func (userRepo *usuarios) FindFollowers(userID uint64) ([]models.Usuario, error)
 			&user.Nome,
 			&user.Nick,
 			&user.Email,
+			&user.CriadoEm,
 		); err != nil {
 			return nil, err
 		}
