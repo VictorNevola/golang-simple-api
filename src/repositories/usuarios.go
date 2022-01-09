@@ -134,6 +134,7 @@ func (userRepo *usuarios) FindByEmail(email string) (models.Usuario, error) {
 	return user, nil
 }
 
+//Follow permite seguir um usuario
 func (userRepo *usuarios) Follow(userID uint64, followID uint64) error {
 	statement, err := userRepo.db.Prepare("INSERT IGNORE INTO seguidores (usuario_id, seguidor_id) VALUES (?, ?)")
 	if err != nil {
@@ -163,4 +164,35 @@ func (userRepo *usuarios) Unfollow(userID uint64, followID uint64) error {
 	}
 
 	return nil
+}
+
+//FindFollowers retorna todos os usuarios que seguem um usuario
+func (userRepo *usuarios) FindFollowers(userID uint64) ([]models.Usuario, error) {
+	rows, err := userRepo.db.Query(`
+		SELECT u.id, u.nome, u.nick, u.email, u.criadoEm 
+		from usuarios u inner join seguidores s on u.id = s.seguidor_id where s.usuario_id = ?
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.Usuario
+
+	for rows.Next() {
+		var user models.Usuario
+
+		if err := rows.Scan(
+			&user.ID,
+			&user.Nome,
+			&user.Nick,
+			&user.Email,
+		); err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
 }

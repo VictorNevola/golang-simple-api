@@ -48,4 +48,10 @@ var rotasUsuarios = []Route{
 		HandlerFunc: controllers.PararDeSeguirUsuario,
 		isPrivate:   true,
 	},
+	{
+		URI:         "/usuarios/{usuarioId}/seguidores",
+		Method:      http.MethodGet,
+		HandlerFunc: controllers.BuscarSeguidores,
+		isPrivate:   true,
+	},
 }
