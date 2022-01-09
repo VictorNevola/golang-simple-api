@@ -36,6 +36,11 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 
 	publicacao.AutorId = userId
 
+	if err = publicacao.Prepare(); err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
 	repositorie := repositories.PublicacaoRepository(db)
 	publicacao.ID, err = repositorie.Create(publicacao)
 	if err != nil {
