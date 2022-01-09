@@ -54,6 +54,7 @@ func (Usuario *Usuario) Prepare(step string) error {
 
 	return nil
 }
+
 func (usuario *Usuario) format(step string) error {
 	usuario.Nome = strings.TrimSpace(usuario.Nome)
 	usuario.Nick = strings.TrimSpace(usuario.Nick)

@@ -229,3 +229,37 @@ func (userRepo *usuarios) FindFollowing(userID uint64) ([]models.Usuario, error)
 
 	return users, nil
 }
+
+//FindPassword traz a senha de um usuario pelo id
+func (userRepo *usuarios) FindPassword(userID uint64) (string, error) {
+	rows, err := userRepo.db.Query("SELECT senha FROM usuarios WHERE id = ?", userID)
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+
+	var user models.Usuario
+
+	if rows.Next() {
+		if err := rows.Scan(&user.Senha); err != nil {
+			return "", err
+		}
+	}
+
+	return user.Senha, nil
+}
+
+//UpdatePassword atualiza a senha de um usuario
+func (userRepo *usuarios) UpdatePassword(userID uint64, senha string) error {
+	statement, err := userRepo.db.Prepare("UPDATE usuarios SET senha = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(senha, userID); err != nil {
+		return err
+	}
+
+	return nil
+}

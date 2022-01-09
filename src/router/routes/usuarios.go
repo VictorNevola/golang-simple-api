@@ -60,4 +60,10 @@ var rotasUsuarios = []Route{
 		HandlerFunc: controllers.BuscarSeguindo,
 		isPrivate:   true,
 	},
+	{
+		URI:         "/usuarios/{usuarioId}/atualizar-senha",
+		Method:      http.MethodPost,
+		HandlerFunc: controllers.AtualizarSenha,
+		isPrivate:   true,
+	},
 }

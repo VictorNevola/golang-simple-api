@@ -6,8 +6,10 @@ import (
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
+	"api/src/security"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -311,5 +313,67 @@ func BuscarSeguindo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responses.JSON(w, http.StatusOK, seguindo)
+}
 
+//AtualizaSenha atualiza a senha de um usuario
+func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
+	userIdToken, err := autentication.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(r)
+	userId, err := strconv.ParseUint(params["usuarioId"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if userIdToken != userId {
+		responses.Error(w, http.StatusForbidden, errors.New("não é possivel atualizar a senha de outro usuario"))
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+
+	var password models.Senha
+	if err = json.Unmarshal(body, &password); err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, erro := db.Connect()
+	if erro != nil {
+		responses.Error(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorie := repositories.NewRepositorieUsers(db)
+	passwordSaveInBd, err := repositorie.FindPassword(userId)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = security.CheckHash(passwordSaveInBd, password.Nova); err != nil {
+		responses.Error(w, http.StatusBadRequest, errors.New("senha atual não confere"))
+		return
+	}
+
+	newPassword, err := security.Hash(password.Nova)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	fmt.Println("newPassword", newPassword)
+
+	if err = repositorie.UpdatePassword(userId, string(newPassword)); err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
 }
