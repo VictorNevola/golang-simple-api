@@ -197,3 +197,35 @@ func (userRepo *usuarios) FindFollowers(userID uint64) ([]models.Usuario, error)
 
 	return users, nil
 }
+
+//FindFollowing retorna todos os usuarios que um usuario segue
+func (userRepo *usuarios) FindFollowing(userID uint64) ([]models.Usuario, error) {
+	rows, err := userRepo.db.Query(`
+		SELECT u.id, u.nome, u.nick, u.email, u.criadoEm 
+		from usuarios u inner join seguidores s on u.id = s.usuario_id where s.seguidor_id = ?
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.Usuario
+
+	for rows.Next() {
+		var user models.Usuario
+
+		if err := rows.Scan(
+			&user.ID,
+			&user.Nome,
+			&user.Nick,
+			&user.Email,
+			&user.CriadoEm,
+		); err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
+}
