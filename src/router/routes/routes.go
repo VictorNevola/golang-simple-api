@@ -17,7 +17,9 @@ type Route struct {
 
 //Config inserts all routes into the router
 func Config(r *mux.Router) *mux.Router {
-	routes := append(rotasUsuarios, rotasLogin)
+	routes := rotasUsuarios
+	routes = append(routes, rotasLogin)
+	routes = append(routes, rotasPublicacoes...)
 
 	for _, route := range routes {
 		if route.isPrivate {
