@@ -335,10 +335,14 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, err := ioutil.ReadAll(r.Body)
+	payload, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
 
 	var password models.Senha
-	if err = json.Unmarshal(body, &password); err != nil {
+	if err = json.Unmarshal(payload, &password); err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
 		return
 	}
