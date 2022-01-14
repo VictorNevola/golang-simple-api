@@ -37,7 +37,7 @@ var rotasUsuarios = []Route{
 		isPrivate:   true,
 	},
 	{
-		URI:         "/usuarios/{usuarioId}/seguir",
+		URI:         "/usuarios/{idToFollow}/seguir",
 		Method:      http.MethodPost,
 		HandlerFunc: controllers.SeguirUsuario,
 		isPrivate:   true,
