@@ -231,19 +231,19 @@ func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
 
 //PararDeSeguirUsuario permite que um usuario pare de seguir outro
 func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
-	seguidorId, err := autentication.ExtractUserID(r)
+	userId, err := autentication.ExtractUserID(r)
 
 	if err != nil {
 		responses.Error(w, http.StatusUnauthorized, err)
 	}
 
 	params := mux.Vars(r)
-	userId, err := strconv.ParseUint(params["usuarioId"], 10, 64)
+	idToUnFollow, err := strconv.ParseUint(params["idToUnFollow"], 10, 64)
 	if err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
 	}
 
-	if seguidorId == userId {
+	if userId == idToUnFollow {
 		responses.Error(w, http.StatusForbidden, errors.New("não é possivel parar de seguir você mesmo"))
 		return
 	}
@@ -256,7 +256,7 @@ func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repositorie := repositories.NewRepositorieUsers(db)
-	if err = repositorie.Unfollow(seguidorId, userId); err != nil {
+	if err = repositorie.Unfollow(userId, idToUnFollow); err != nil {
 		responses.Error(w, http.StatusInternalServerError, err)
 		return
 	}
