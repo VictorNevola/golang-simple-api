@@ -12,7 +12,7 @@ CREATE TABLE `usuarios` (
   email varchar(50) NOT NULL unique,
   senha varchar(100) NOT NULL,
   criadoEm timestamp default current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
 
 CREATE TABLE `seguidores` (
   usuario_id int NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE `seguidores` (
 
   primary key (usuario_id, seguidor_id)
 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
 
 CREATE TABLE `publicacoes` (
   id int auto_increment primary key,
@@ -42,4 +42,4 @@ CREATE TABLE `publicacoes` (
   curtidas int default 0,
   criadoEm timestamp default current_timestamp()
 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
